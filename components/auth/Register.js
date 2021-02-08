@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Button, TextInput } from "react-native";
+import {View, Button, TextInput} from "react-native";
 import firebase from "firebase";
 
 export default function Register() {
@@ -10,8 +10,17 @@ export default function Register() {
     const onSignUp = async () => {
         try {
             const result = await firebase.auth().createUserWithEmailAndPassword(email, password);
+            if (result) {
+                const newUser = firebase.firestore().collection("users")
+                    .doc(firebase.auth().currentUser.uid)
+                    .set({
+                        name,
+                        email,
+                    });
+                console.log('newUser', newUser);
+            }
             console.log('result', result);
-        } catch(error) {
+        } catch (error) {
             console.log('error', error);
         }
     }
