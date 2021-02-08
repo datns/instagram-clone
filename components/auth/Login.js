@@ -2,14 +2,13 @@ import React from 'react';
 import { View, Button, TextInput } from "react-native";
 import firebase from "firebase";
 
-export default function Register() {
+export default function Login() {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
-    const [name, setName] = React.useState('');
 
-    const onSignUp = async () => {
+    const onSignIn = async () => {
         try {
-            const result = await firebase.auth().createUserWithEmailAndPassword(email, password);
+            const result = await firebase.auth().signInWithEmailAndPassword(email, password);
             console.log('result', result);
         } catch(error) {
             console.log('error', error);
@@ -18,10 +17,6 @@ export default function Register() {
 
     return (
         <View>
-            <TextInput
-                placeholder="name"
-                onChangeText={(name) => setName(name)}
-            />
             <TextInput
                 placeholder="email"
                 onChangeText={(email) => setEmail(email)}
@@ -32,8 +27,8 @@ export default function Register() {
                 onChangeText={(password) => setPassword(password)}
             />
             <Button
-                onPress={onSignUp}
-                title="Sign Up"
+                onPress={onSignIn}
+                title="Sign In"
             />
         </View>
     )
