@@ -3,8 +3,8 @@ import {Text, View} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchUser} from "../redux/actions";
 import {createMaterialBottomTabNavigator} from "@react-navigation/material-bottom-tabs";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import FeedScreen from './main/Feed';
 import ProfileScreen from './main/Profile';
 import AddScreen from './main/Add';
@@ -12,6 +12,7 @@ import Add from "./main/Add";
 
 const Tab = createMaterialBottomTabNavigator();
 
+const EmptyView = () => <View />;
 export default function Main() {
     const dispatch = useDispatch();
     const currentUser = useSelector(store => store.userState.currentUser);
@@ -38,7 +39,7 @@ export default function Main() {
             />
             <Tab.Screen
                 name="AddContainer"
-                component={() => <View/>}
+                component={EmptyView}
                 listeners={({navigation}) => ({
                     tabPress: event => {
                         event.preventDefault();
