@@ -1,13 +1,20 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { View } from 'react-native';
+import {View, Text} from 'react-native';
 import * as firebase from "firebase";
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from "@react-navigation/stack";
+import {Provider} from 'react-redux';
+import {createStore, applyMiddleware} from "redux";
+import rootReducer from './redux/reducers';
+import thunk from 'redux-thunk';
 
 import LandingScreen from './components/auth/Landing';
 import RegisterScreen from './components/auth/Register';
-import {Text} from "react-native-web";
+import LoginScreen from './components/auth/Login';
+import MainScreen from './components/Main';
+
+const store = createStore(rootReducer, applyMiddleware(thunk));
 
 const firebaseConfig = {
     apiKey: "AIzaSyBdbXRIEsqD4V2gH0xnvwAStVRjL6zZWkQ",
@@ -30,7 +37,7 @@ export default function App() {
 
     React.useEffect(() => {
         firebase.auth().onAuthStateChanged((user) => {
-            if(!user) {
+            if (!user) {
                 setLoggedIn(false);
             } else {
                 setLoggedIn(true);
@@ -41,7 +48,7 @@ export default function App() {
 
     if (!loaded) {
         return (
-            <View style={{ flex: 1, justifyContent: 'center' }}>
+            <View style={{flex: 1, justifyContent: 'center'}}>
                 <Text>Loading</Text>
             </View>
         )
@@ -51,16 +58,17 @@ export default function App() {
         return (
             <NavigationContainer>
                 <Stack.Navigator initialRouteName="Landing">
-                    <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }}/>
-                    <Stack.Screen name="Register" component={RegisterScreen} />
+                    <Stack.Screen name="Landing" component={LandingScreen} options={{headerShown: false}}/>
+                    <Stack.Screen name="Register" component={RegisterScreen}/>
+                    <Stack.Screen name="Login" component={LoginScreen}/>
                 </Stack.Navigator>
             </NavigationContainer>
         );
     }
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-            <Text>User is logged in</Text>
-        </View>
+        <Provider store={store}>
+            <MainScreen/>
+        </Provider>
     )
 }
