@@ -3,21 +3,21 @@ import {Text, View} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchUser, fetchUserPosts} from "../redux/actions";
 import {createMaterialBottomTabNavigator} from "@react-navigation/material-bottom-tabs";
-// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {MaterialCommunityIcons} from '@expo/vector-icons';
 import FeedScreen from './main/Feed';
 import ProfileScreen from './main/Profile';
-import AddScreen from './main/Add';
+import SearchScreen from './main/Search';
 import Add from "./main/Add";
+import Search from "./main/Search";
+import firebase from "firebase";
 
 const Tab = createMaterialBottomTabNavigator();
 
-const EmptyView = () => <View />;
+const EmptyView = () => <View/>;
 export default function Main() {
     const dispatch = useDispatch();
     const currentUser = useSelector(store => store.userState.currentUser);
 
-    console.log('currentUser', currentUser)
     React.useEffect(() => {
         dispatch(fetchUser());
         dispatch(fetchUserPosts());
@@ -39,6 +39,15 @@ export default function Main() {
                 }}
             />
             <Tab.Screen
+                name="Search"
+                component={SearchScreen}
+                options={{
+                    tabBarIcon: ({color, size}) => (
+                        <MaterialCommunityIcons name="magnify" color={color} size={26}/>
+                    ),
+                }}
+            />
+            <Tab.Screen
                 name="AddContainer"
                 component={EmptyView}
                 listeners={({navigation}) => ({
@@ -56,6 +65,12 @@ export default function Main() {
             <Tab.Screen
                 name="Profile"
                 component={ProfileScreen}
+                listeners={({navigation}) => ({
+                    tabPress: event => {
+                        event.preventDefault();
+                        navigation.navigate('Profile', {uid: firebase.auth().currentUser.uid})
+                    }
+                })}
                 options={{
                     tabBarIcon: ({color, size}) => (
                         <MaterialCommunityIcons name="account-circle" color={color} size={26}/>
