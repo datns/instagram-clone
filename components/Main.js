@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchUser} from "../redux/actions";
+import {fetchUser, fetchUserPosts} from "../redux/actions";
 import {createMaterialBottomTabNavigator} from "@react-navigation/material-bottom-tabs";
 // import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -20,6 +20,7 @@ export default function Main() {
     console.log('currentUser', currentUser)
     React.useEffect(() => {
         dispatch(fetchUser());
+        dispatch(fetchUserPosts());
     }, []);
 
     if (!currentUser)
