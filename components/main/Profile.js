@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, FlatList, StyleSheet, Image} from 'react-native';
+import {View, Text, FlatList, StyleSheet, Image, Button} from 'react-native';
 import {useSelector} from "react-redux";
 import firebase from "firebase";
 import "firebase/firestore";
@@ -7,12 +7,15 @@ import "firebase/firestore";
 export default function Profile(props) {
     const [userPost, setUserPosts] = React.useState([]);
     const [user, setUser] = React.useState(null);
+    const [following, setFollowing] = React.useState(false);
     const posts = useSelector(store => store.userState.posts);
+    const userFollowing = useSelector(store => store.userState.following);
     const currentUser = useSelector(store => store.userState.currentUser);
+    const currentUserId = firebase.auth().currentUser.uid;
     const uid = props.route.params.uid;
 
     React.useEffect(() => {
-        if (uid === currentUser.uid) {
+        if (uid === currentUserId) {
             setUser(currentUser);
             setUserPosts(posts);
         } else {
@@ -43,7 +46,28 @@ export default function Profile(props) {
                     setUserPosts(posts)
                 })
         }
-    }, [uid]);
+        if (userFollowing.indexOf(uid) !== -1)
+            setFollowing(true);
+        else setFollowing(false);
+    }, [uid, userFollowing]);
+
+    const onFollow = async () => {
+        await firebase.firestore()
+            .collection("following")
+            .doc(firebase.auth().currentUser.uid)
+            .collection("userFollowing")
+            .doc(uid)
+            .set({})
+    }
+
+    const onUnFollow = async () => {
+        await firebase.firestore()
+            .collection("following")
+            .doc(firebase.auth().currentUser.uid)
+            .collection("userFollowing")
+            .doc(uid)
+            .delete();
+    }
 
     if (user === null)
         return (<View/>)
@@ -52,6 +76,21 @@ export default function Profile(props) {
             <View style={styles.containerInfo}>
                 <Text>{user.name}</Text>
                 <Text>{user.email}</Text>
+                {uid !== currentUserId ? (
+                    <View>
+                        {following ? (
+                            <Button
+                                title={"Following"}
+                                onPress={onUnFollow}
+                            />
+                        ) : (
+                            <Button
+                                title="Follow"
+                                onPress={onFollow}
+                            />
+                        )}
+                    </View>
+                ) : null}
             </View>
             <View style={styles.containerGallery}>
                 <FlatList

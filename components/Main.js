@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchUser, fetchUserPosts} from "../redux/actions";
+import {fetchUser, fetchUserFollowing, fetchUserPosts} from "../redux/actions";
 import {createMaterialBottomTabNavigator} from "@react-navigation/material-bottom-tabs";
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import FeedScreen from './main/Feed';
@@ -21,6 +21,7 @@ export default function Main() {
     React.useEffect(() => {
         dispatch(fetchUser());
         dispatch(fetchUserPosts());
+        dispatch(fetchUserFollowing());
     }, []);
 
     if (!currentUser)

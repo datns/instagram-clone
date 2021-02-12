@@ -1,6 +1,6 @@
 import firebase from "firebase";
 import "firebase/firestore";
-import {USER_POSTS_STATE_CHANGE, USER_STATE_CHANGE} from "../constants";
+import {USER_FOLLOWING_STATE_CHANGE, USER_POSTS_STATE_CHANGE, USER_STATE_CHANGE} from "../constants";
 
 // const db = firebase.firestore();
 export function fetchUser() {
@@ -11,6 +11,7 @@ export function fetchUser() {
             .then((snapshot) => {
                 if (snapshot.exists) {
                     dispatch({type: USER_STATE_CHANGE, currentUser: snapshot.data()})
+                    console.log(snapshot.data())
                 } else {
                     console.log('does not exist')
                 }
@@ -36,6 +37,20 @@ export function fetchUserPosts() {
                 })
                 console.log(posts);
                 dispatch({type: USER_POSTS_STATE_CHANGE, posts })
+            })
+    })
+}
+
+export function fetchUserFollowing() {
+    return ((dispatch) => {
+        firebase.firestore().collection("following")
+            .doc(firebase.auth().currentUser.uid)
+            .collection("userFollowing")
+            .onSnapshot((snapshot) => {
+                let following = snapshot.docs.map(doc => {
+                    return doc.id
+                })
+                dispatch({type: USER_FOLLOWING_STATE_CHANGE, following })
             })
     })
 }
