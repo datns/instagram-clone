@@ -69,6 +69,10 @@ export default function Profile(props) {
             .delete();
     }
 
+    const onLogout = async () => {
+        await  firebase.auth().signOut();
+    }
+
     if (user === null)
         return (<View/>)
     return (
@@ -90,7 +94,10 @@ export default function Profile(props) {
                             />
                         )}
                     </View>
-                ) : null}
+                ) : <Button
+                    title="Logout"
+                    onPress={onLogout}
+                />}
             </View>
             <View style={styles.containerGallery}>
                 <FlatList
