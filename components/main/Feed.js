@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet, FlatList, Image} from 'react-native';
 import {useSelector} from "react-redux";
 
-export default function Feed(props) {
+export default function Feed({navigation}) {
     const users = useSelector(state => state.usersState.users);
     const usersLoaded = useSelector(state => state.usersState.usersLoaded);
     const [posts, setPosts] = React.useState([]);
@@ -32,6 +32,12 @@ export default function Feed(props) {
                                 style={styles.image}
                                 source={{uri: item.downloadURL}}
                             />
+                            <Text onPress={() => navigation.navigate('Comment', {
+                                postId: item.id,
+                                uid: item.user.uid,
+                            })}>
+                                View Comments...
+                            </Text>
                         </View>
                     )}
                 />

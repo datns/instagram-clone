@@ -15,6 +15,7 @@ import LoginScreen from './components/auth/Login';
 import MainScreen from './components/Main';
 import AddScreen from './components/main/Add';
 import SaveScreen from './components/main/Save';
+import CommentScreen from './components/main/Comment';
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
@@ -75,6 +76,7 @@ export default function App() {
                     <Stack.Screen name="Main" component={MainScreen} />
                     <Stack.Screen name="Add" component={AddScreen}/>
                     <Stack.Screen name="Save" component={SaveScreen}/>
+                    <Stack.Screen name="Comment" component={CommentScreen}/>
                 </Stack.Navigator>
             </NavigationContainer>
         </Provider>
