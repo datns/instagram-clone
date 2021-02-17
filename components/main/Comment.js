@@ -3,13 +3,32 @@ import {View, Text, FlatList, Button, TextInput} from 'react-native';
 
 import firebase from "firebase";
 import "firebase/firestore";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchUsersData} from "../../redux/actions";
 
 export default function Comment(props) {
     const [comments, setComments] = React.useState([]);
     const [postId, setPostId] = React.useState("");
     const [text, setText] = React.useState("");
+    const users = useSelector(state => state.usersState.users);
+    const dispatch = useDispatch();
 
     React.useEffect(() => {
+        function matchUserToComment(comments) {
+            for (let i = 0; i < comments.length; i++) {
+                if (comments[i].hasOwnProperty('user')) {
+                    continue;
+                }
+                const user = users.find(x => x.uid === comments[i].creator);
+                if (user === undefined) {
+                    dispatch(fetchUsersData(comments[i].creator, false));
+                } else {
+                    comments[i].user = user
+                }
+            }
+            setComments(comments);
+        }
+
         if (props.route.params.postId !== postId) {
             firebase.firestore()
                 .collection('posts')
@@ -24,11 +43,13 @@ export default function Comment(props) {
                         const id = doc.id;
                         return {id, ...data}
                     })
-                    setComments(comments);
-                    setPostId(props.route.params.postId);
+                    matchUserToComment(comments);
                 })
+            setPostId(props.route.params.postId);
+        } else {
+            matchUserToComment(comments)
         }
-    }, [props.route.params.postId]);
+    }, [props.route.params.postId, users]);
 
     const onCommentSend = async () => {
         await firebase.firestore()
@@ -43,15 +64,24 @@ export default function Comment(props) {
             })
     }
 
+
     return (
         <View>
             <FlatList
                 data={comments}
-                renderItem={({item}) => (
-                    <View>
-                        <Text>{item.text}</Text>
-                    </View>
-                )}
+                extraData={users}
+                renderItem={({item}) => {
+                    return (
+                        <View>
+                            {item.user !== undefined ?
+                                <Text>
+                                    {item.user.name}
+                                </Text> : null}
+                            <Text>{item.text}</Text>
+                        </View>
+                    )
+                 }
+                }
             />
             <View>
                 <TextInput

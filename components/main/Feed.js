@@ -4,7 +4,7 @@ import {useSelector} from "react-redux";
 
 export default function Feed({navigation}) {
     const users = useSelector(state => state.usersState.users);
-    const usersLoaded = useSelector(state => state.usersState.usersLoaded);
+    const usersFollowingLoaded = useSelector(state => state.usersState.usersFollowingLoaded);
     const [posts, setPosts] = React.useState([]);
 
     React.useEffect(() => {
@@ -18,7 +18,7 @@ export default function Feed({navigation}) {
             return x.creation - y.creation;
         })
         setPosts(posts);
-    }, [usersLoaded, users])
+    }, [usersFollowingLoaded, users])
 
     return (
         <View style={styles.container}>
