@@ -32,7 +32,16 @@ export default function Feed({navigation}) {
             .doc(postId)
             .collection("likes")
             .doc(firebase.auth().currentUser.uid)
-            .set({})
+            .set({});
+
+        await firebase.firestore()
+            .collection("posts")
+            .doc(userId)
+            .collection("userPosts")
+            .doc(postId)
+            .update({
+                likesCount: firebase.firestore.FieldValue.increment(1)
+            })
     }
 
     const onDislikePress = async (userId, postId) => {
@@ -43,9 +52,17 @@ export default function Feed({navigation}) {
             .doc(postId)
             .collection("likes")
             .doc(firebase.auth().currentUser.uid)
-            .delete()
+            .delete();
+
+        await firebase.firestore()
+            .collection("posts")
+            .doc(userId)
+            .collection("userPosts")
+            .doc(postId)
+            .update({
+                likesCount: firebase.firestore.FieldValue.increment(-1)
+            })
     }
-    console.log('post', posts)
     return (
         <View style={styles.container}>
             <View style={styles.containerGallery}>
